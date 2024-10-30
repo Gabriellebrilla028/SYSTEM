@@ -73,43 +73,52 @@
         </form>
 
         <?php
-        // Base class Person
-        class Person {
-            protected $height;
-            protected $weight;
+// Base class Person
+class Person {
+    private $height;
+    private $weight;
 
-            public function __construct($height, $weight) {
-                $this->height = $height;
-                $this->weight = $weight;
-            }
+    public function __construct($height, $weight) {
+        $this->height = $height;
+        $this->weight = $weight;
+    }
 
-            public function getHeight() {
-                return $this->height;
-            }
+    private function getHeight() {
+        return $this->height;
+    }
 
-            public function getWeight() {
-                return $this->weight;
-            }
-        }
+    private function getWeight() {
+        return $this->weight;
+    }
 
-        // Derived class BMI extends Person
-        class BMI extends Person {
-            public function calculateBMI() {
-                $heightInMeters = $this->height / 100;
-                return $this->weight / ($heightInMeters * $heightInMeters);
-            }
-        }
+    // Protected methods to allow access in derived classes
+    protected function accessHeight() {
+        return $this->getHeight();
+    }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $height = $_POST['height'];
-            $weight = $_POST['weight'];
+    protected function accessWeight() {
+        return $this->getWeight();
+    }
+}
 
-            $bmiCalculator = new BMI($height, $weight);
-            $bmi = $bmiCalculator->calculateBMI();
+// Derived class BMI extends Person
+class BMI extends Person {
+    public function calculateBMI() {
+        $heightInMeters = $this->accessHeight() / 100; // Use protected method
+        return $this->accessWeight() / ($heightInMeters * $heightInMeters); // Use protected method
+    }
+}
 
-            echo "<div class='result'><strong>BMI:</strong> " . number_format($bmi, 2) . "</div>";
-        }
-        ?>
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $height = $_POST['height'];
+    $weight = $_POST['weight'];
+
+    $bmiCalculator = new BMI($height, $weight);
+    $bmi = $bmiCalculator->calculateBMI();
+
+    echo "<div class='result'><strong>BMI:</strong> " . number_format($bmi, 2) . "</div>";
+}
+?>
     </div>
 </body>
 </html>
